@@ -12,6 +12,7 @@ import {
   GreaterThan1,
   Comparator2,
   Comparator4,
+  Mux2,
   Mux1,
 } from '../lib/wild_logic/src/index';
 
@@ -22,6 +23,7 @@ import {
 } from './components/gates';
 
 import {
+  Mux2 as Mux2View,
   Mux1 as Mux1View,
 } from './components/mux';
 
@@ -61,7 +63,7 @@ const BubblesortCircuit = (props) => {
             onSwitchClicked={props.onSwitchClicked} />
         </g>
         <g transform='translate(20, 0)'>
-          <Mux1View data={props.data.mux1} />
+          <Mux2View data={props.data.mux2} />
         </g>
         {/*
         <g transform='translate(20, 0)'>
@@ -335,10 +337,12 @@ connectPorts(sw6.out(), chip.inB2());
 connectPorts(sw7.out(), chip.inB1());
 connectPorts(sw8.out(), chip.inB0());
 
-data.mux1 = new Mux1();
-connectPorts(sw1.out(), data.mux1.inA());
-connectPorts(sw2.out(), data.mux1.inB());
-connectPorts(sw3.out(), data.mux1.inS());
+data.mux2 = new Mux2();
+connectPorts(sw1.out(), data.mux2.inA1());
+connectPorts(sw2.out(), data.mux2.inA0());
+connectPorts(sw3.out(), data.mux2.inB1());
+connectPorts(sw4.out(), data.mux2.inB0());
+connectPorts(sw5.out(), data.mux2.inS());
 
 sw1.setSwitchState(0);
 sw2.setSwitchState(0);
