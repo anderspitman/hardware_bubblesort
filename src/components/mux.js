@@ -21,8 +21,6 @@ export const Mux4 = (props) => {
   return (
     <g className='mux4'
         transform={transform(props.x, props.y, props.rotation, props.scale)}>
-      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
-      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
       <g transform={transform(o)}>
         <Mux2 data={data._muxX} />
         <Mux2 data={data._muxY} y='100' />
