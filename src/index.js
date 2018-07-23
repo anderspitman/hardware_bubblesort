@@ -38,7 +38,7 @@ const BubblesortCircuit = (props) => {
     <CircuitView>
       <ButtonBarView switchOffset={0} data={props.data.switches1}
         onSwitchClicked={props.onSwitchClicked} />
-      <g transform='translate(0, 260)'>
+      <g transform='translate(0, 240)'>
         <ButtonBarView switchOffset={4} data={props.data.switches2} 
           onSwitchClicked={props.onSwitchClicked} />
       </g>
@@ -81,7 +81,7 @@ const Comparator4View = (props) => {
       <g transform='translate(0, 0)'>
         <Comparator2View data={props.data._comp1} />
       </g>
-      <g transform='translate(0, 260)'>
+      <g transform='translate(0, 240)'>
         <Comparator2View data={props.data._comp2} />
       </g>
       <g transform='translate(360, 240)'>
@@ -103,35 +103,50 @@ const Comparator2View = (props) => {
     <g className='comparator-2'>
       <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
       <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
-      <Comparator1View data={props.data._a1Compb1} />
-      <g transform='translate(0, 120)'>
-        <Comparator1View data={props.data._a0Compb0} />
-      </g>
-      <g transform='translate(190, 15)'>
-        <AndGateView data={props.data._andEq} />
-      </g>
-      <g transform='translate(190, 80)'>
-        <AndGateView data={props.data._andGt} />
-      </g>
-      <g transform='translate(240, 65)'>
-        <OrGateView data={props.data._or} />
+      <g transform={transform(20, 0)}>
+        <Comparator1View data={props.data._a1Compb1} />
+        <g transform='translate(0, 120)'>
+          <Comparator1View data={props.data._a0Compb0} />
+        </g>
+        <g transform='translate(180, 15)'>
+          <AndGateView data={props.data._andEq} />
+        </g>
+        <g transform='translate(180, 80)'>
+          <AndGateView data={props.data._andGt} />
+        </g>
+        <g transform='translate(230, 65)'>
+          <OrGateView data={props.data._or} />
+        </g>
       </g>
 
-      // wires
-      <path d="M 150 20 H 190" stroke={color(data._a1Compb1.outEq())}
+      // input wires
+      // a1
+      <path d="M 0 30 H 20" stroke={color(data.inA1())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 190 30 H 170 V 140 H 150"
+      // a0
+      <path d="M 0 60 H 10 V 150 H 20" stroke={color(data.inA0())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b1
+      <path d="M 0 180 H 20 V 89" stroke={color(data.inB1())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b0
+      <path d="M 0 210 H 20 V 210" stroke={color(data.inB0())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // internal wires
+      <path d="M 160 20 H 200" stroke={color(data._a1Compb1.outEq())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 200 30 H 180 V 140 H 160"
         stroke={color(data._a0Compb0.outEq())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 160 20 V 85 H 190" stroke={color(data._a1Compb1.outEq())}
+      <path d="M 170 20 V 85 H 200" stroke={color(data._a1Compb1.outEq())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <circle cx='160' cy='20' r='3' fill={color(data._a1Compb1.outEq())} />
-      <path d="M 120 190 H 180 V 95 H 190"
+      <circle cx='170' cy='20' r='3' fill={color(data._a1Compb1.outEq())} />
+      <path d="M 130 190 H 190 V 95 H 200"
         stroke={color(data._a0Compb0.outGt())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 120 70 H 240" stroke={color(data._a1Compb1.outGt())}
+      <path d="M 130 70 H 250" stroke={color(data._a1Compb1.outGt())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 220 90 H 230 V 80 H 240"
+      <path d="M 230 90 H 240 V 80 H 250"
         stroke={color(data._andGt.out())}
         strokeWidth={wireStrokeWidth} fill='none' />
     </g>
