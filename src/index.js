@@ -16,6 +16,7 @@ import {
 
 const highColor = 'green';
 const lowColor = 'black';
+const wireStrokeWidth = 2;
 
 const CircuitView = (props) => (
   <svg width='800' height='600' >
@@ -41,7 +42,7 @@ const BubblesortCircuit = (props) => {
         <ButtonBarView switchOffset={4} data={props.data.switches2} 
           onSwitchClicked={props.onSwitchClicked} />
       </g>
-      <g transform='translate(30, 0)'>
+      <g transform='translate(100, 0)'>
         <Comparator4View data={props.data.comp4} />
       </g>
     </CircuitView>
@@ -97,52 +98,91 @@ const Comparator4View = (props) => {
 }
 
 const Comparator2View = (props) => {
+  const data = props.data;
   return (
     <g className='comparator-2'>
+      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
+      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
       <Comparator1View data={props.data._a1Compb1} />
       <g transform='translate(0, 120)'>
         <Comparator1View data={props.data._a0Compb0} />
       </g>
-      <g transform='translate(140, 90)'>
-        <AndGateView data={props.data._andGt} />
-      </g>
-      <g transform='translate(200, 50)'>
-        <OrGateView data={props.data._or} />
-      </g>
-      <g transform='translate(200, 130)'>
+      <g transform='translate(190, 15)'>
         <AndGateView data={props.data._andEq} />
       </g>
+      <g transform='translate(190, 80)'>
+        <AndGateView data={props.data._andGt} />
+      </g>
+      <g transform='translate(240, 65)'>
+        <OrGateView data={props.data._or} />
+      </g>
+
+      // wires
+      <path d="M 150 20 H 190" stroke={color(data._a1Compb1.outEq())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 190 30 H 170 V 140 H 150"
+        stroke={color(data._a0Compb0.outEq())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 160 20 V 85 H 190" stroke={color(data._a1Compb1.outEq())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <circle cx='160' cy='20' r='3' fill={color(data._a1Compb1.outEq())} />
+      <path d="M 120 190 H 180 V 95 H 190"
+        stroke={color(data._a0Compb0.outGt())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 120 70 H 240" stroke={color(data._a1Compb1.outGt())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 220 90 H 230 V 80 H 240"
+        stroke={color(data._andGt.out())}
+        strokeWidth={wireStrokeWidth} fill='none' />
     </g>
   );
 }
 
 const Comparator1View = (props) => {
+  const data = props.data;
   return (
     <g className='comparator-1'>
-      <XnorGateView data={props.data._xnor} />
-      <g transform='translate(0, 60)'>
-        <GreaterThan1View data={props.data._gt} />
+      <g transform='translate(40, 0)'>
+        <XnorGateView data={props.data._xnor} />
+        <g transform='translate(0, 60)'>
+          <GreaterThan1View data={props.data._gt} />
+        </g>
       </g>
+
+      // wires
+      <path d="M 0 30 H 20 V 5 H 40" stroke={color(data.inA())}
+        strokeWidth={wireStrokeWidth}  fill='none' />
+      <circle cx='20' cy='30' r='3' fill={color(data.inA())} />
+      <path d="M 20 30 V 66 H 40" stroke={color(data.inA())}
+        strokeWidth={wireStrokeWidth}  fill='none' />
+      <path d="M 0 90 H 40" stroke={color(data.inB())}
+        strokeWidth={wireStrokeWidth}  fill='none' />
+      <path d="M 35 90 V 30 H 40" stroke={color(data.inB())}
+        strokeWidth={wireStrokeWidth}  fill='none' />
     </g>
   );
 }
 
 const GreaterThan1View = (props) => {
+  const data = props.data;
   const andColor =
     props.data._and.inA().getState() === 0 ? lowColor : highColor;
   const notColor = props.data._not.getState() === 0 ? lowColor : highColor;
   return (
     <g className='greater-than-1'>
-      <g transform='translate(40, 0)'>
+      <g transform='translate(50, 0)'>
         <AndGateView data={props.data._and} />
       </g>
-      <g transform='translate(0, 30)'>
+      <g transform='translate(10, 20)'>
         <NotGateView data={props.data._not} />
       </g>
-      <path d="M 0 6 H 40" stroke={andColor} strokeWidth='2.5'
-        fill='none' />
-      <path d="M 22 40 H 30 V 15 H 40" stroke={notColor} strokeWidth='2.5'
-        fill='none' />
+
+      <path d="M 0 6 H 50" stroke={andColor}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 32 30 H 40 V 15 H 50" stroke={notColor}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 0 30 H 10" stroke={color(data._not.in())}
+        strokeWidth={wireStrokeWidth}  fill='none' />
     </g>
   );
 }
@@ -171,7 +211,8 @@ const NotGateView = (props) => {
 const OrGateView = (props) => {
   const color = props.data.out().getState() === 0 ? 'black' : 'green';
   return (
-    <g className='or-gate'>
+    <g className='or-gate'
+        transform={transform(props.x, props.y, props.rotation, props.scale)}>
       <rect fill={color} x='0' y='0' width='20' height='20'></rect>
       <circle fill={color} cx='20' cy='10' r='10'></circle>
     </g>
@@ -179,18 +220,33 @@ const OrGateView = (props) => {
 }
 
 const XnorGateView = (props) => {
+  const data = props.data;
   const orColor = props.data._or.out().getState() === 0 ? 'black' : 'green';
   const nand1Color =
     props.data._nand1.out().getState() === 0 ? 'black' : 'green';
   return (
     <g className='xnor-gate'>
-      <OrGateView data={props.data._or} />
-      <NandGateView data={props.data._nand1} x='0' y='25'/>
-      <NandGateView data={props.data._nand2} x='50' y='10'/>
-      <path d="M 30 10 H 40 V 15 H 50" stroke={orColor} strokeWidth='2.5'
+      <OrGateView data={props.data._or} x='30' />
+      <NandGateView data={props.data._nand1} x='30' y='25'/>
+      <NandGateView data={props.data._nand2} x='80' y='10'/>
+
+      // wires
+      <path d="M 60 10 H 70 V 15 H 80" stroke={orColor}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 63 35 H 70 V 25 H 80" stroke={nand1Color} strokeWidth='2'
         fill='none' />
-      <path d="M 33 35 H 40 V 25 H 50" stroke={nand1Color} strokeWidth='2.5'
-        fill='none' />
+
+      <path d="M 0 5 H 30" stroke={color(data.inA())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 20 5 V 40 H 30" stroke={color(data.inA())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <circle cx='20' cy='5' r='3' fill={color(data.inA())} />
+
+      <path d="M 0 30 H 30" stroke={color(data.inB())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 10 30 V 13 H 30" stroke={color(data.inB())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <circle cx='10' cy='30' r='3' fill={color(data.inB())} />
     </g>
   );
 }
@@ -208,6 +264,15 @@ const NandGateView = (props) => {
 }
 
 function transform(x, y, rotation, scale) {
+
+  if (x === undefined) {
+    x = 0;
+  }
+
+  if (y === undefined) {
+    y = 0;
+  }
+
   let transform = "translate(" + x + ", " + y + ")";
 
   if (rotation !== undefined) {
@@ -244,28 +309,23 @@ connectPorts(sw5.out(), chip.inB3());
 connectPorts(sw6.out(), chip.inB2());
 connectPorts(sw7.out(), chip.inB1());
 connectPorts(sw8.out(), chip.inB0());
-//
-sw1.setSwitchState(1);
+
+sw1.setSwitchState(0);
 sw2.setSwitchState(0);
-sw3.setSwitchState(1);
+sw3.setSwitchState(0);
 sw4.setSwitchState(0);
 
 sw5.setSwitchState(0);
-sw6.setSwitchState(1);
-sw7.setSwitchState(1);
+sw6.setSwitchState(0);
+sw7.setSwitchState(0);
 sw8.setSwitchState(0);
 
 data.switches1 = [ sw1, sw2, sw3, sw4 ];
 data.switches2 = [ sw5, sw6, sw7, sw8 ];
 const allSwitches = data.switches1.concat(data.switches2);
 
-console.log(chip.outGt().getState());
-//console.log(chip.outEq().getState());
-
 
 function switchClicked(index) {
-  console.log("Switch clicky");
-
   const sw = allSwitches[index];
 
   if (sw.out().getState() === 1) {
@@ -276,6 +336,10 @@ function switchClicked(index) {
   }
 
   render();
+}
+
+function color(elem) {
+  return elem.getState() === 0 ? lowColor : highColor;
 }
 
 function render() {
