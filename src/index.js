@@ -36,13 +36,15 @@ function App(props) {
 const BubblesortCircuit = (props) => {
   return (
     <CircuitView>
-      <ButtonBarView switchOffset={0} data={props.data.switches1}
-        onSwitchClicked={props.onSwitchClicked} />
-      <g transform='translate(0, 240)'>
+      <g transform='translate(0, 10)'>
+        <ButtonBarView switchOffset={0} data={props.data.switches1}
+          onSwitchClicked={props.onSwitchClicked} />
+      </g>
+      <g transform='translate(0, 310)'>
         <ButtonBarView switchOffset={4} data={props.data.switches2} 
           onSwitchClicked={props.onSwitchClicked} />
       </g>
-      <g transform='translate(100, 0)'>
+      <g transform='translate(20, 0)'>
         <Comparator4View data={props.data.comp4} />
       </g>
     </CircuitView>
@@ -53,7 +55,7 @@ const ButtonBarView = (props) => {
 
   const switches = props.data.map((sw, i) => {
     return (
-      <g key={i} transform={transform(10, 20 + (i * 60))}>
+      <g key={i} transform={transform(10, 20 + (i * 40))}>
         <ButtonView data={sw} index={i + props.switchOffset}
           onClick={props.onSwitchClicked} />
       </g>
@@ -76,23 +78,68 @@ const ButtonView = (props) => {
 }
 
 const Comparator4View = (props) => {
+  const data = props.data;
   return (
     <g className='comparator-4'>
-      <g transform='translate(0, 0)'>
-        <Comparator2View data={props.data._comp1} />
+      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
+      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
+      <g transform={transform(50, 0)} >
+        <g transform='translate(0, 0)'>
+          <Comparator2View data={props.data._comp1} />
+        </g>
+        <g transform='translate(0, 240)'>
+          <Comparator2View data={props.data._comp2} />
+        </g>
+        <g transform='translate(320, 120)'>
+          <AndGateView data={props.data._andGt} />
+        </g>
+        <g transform='translate(370, 200)'>
+          <AndGateView data={props.data._andEq} />
+        </g>
+        <g transform='translate(370, 110)'>
+          <OrGateView data={props.data._orGt} />
+        </g>
       </g>
-      <g transform='translate(0, 240)'>
-        <Comparator2View data={props.data._comp2} />
-      </g>
-      <g transform='translate(360, 240)'>
-        <AndGateView data={props.data._andEq} />
-      </g>
-      <g transform='translate(300, 300)'>
-        <AndGateView data={props.data._andGt} />
-      </g>
-      <g transform='translate(360, 200)'>
-        <OrGateView data={props.data._orGt} />
-      </g>
+      // input wires
+      // a3
+      <path d="M 0 30 H 50" stroke={color(data.inA3())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // a2
+      <path d="M 0 70 H 50" stroke={color(data.inA2())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // a1
+      <path d="M 0 110 H 20 V 270 H 50" stroke={color(data.inA1())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // a0
+      <path d="M 0 150 H 10 V 310 H 50" stroke={color(data.inA0())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b3
+      <path d="M 0 330 H 30 V 170 H 50" stroke={color(data.inB3())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b2
+      <path d="M 0 370 H 40 V 210 H 50" stroke={color(data.inB2())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b1
+      <path d="M 0 410 H 50" stroke={color(data.inB1())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      // b0
+      <path d="M 0 450 H 50" stroke={color(data.inB0())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+
+      // internal wires
+      <path d="M 280 25 H 340 V 205 H 420" stroke={color(data._andEq.inA())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 280 265 H 340 V 215 H 420" stroke={color(data._andEq.inB())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 400 130 H 410 V 125 H 420" stroke={color(data._andEq.out())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 330 75 H 410 V 115 H 420" stroke={color(data._orGt.inA())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <path d="M 340 125 H 370" stroke={color(data._comp1.outEq())}
+        strokeWidth={wireStrokeWidth} fill='none' />
+      <circle cx='340' cy='125' r='3' fill={color(data._comp1.outEq())} />
+      <path d="M 330 315 H 350 V 135 H 370" stroke={color(data._comp2.outGt())}
+        strokeWidth={wireStrokeWidth} fill='none' />
     </g>
   );
 }
@@ -101,8 +148,6 @@ const Comparator2View = (props) => {
   const data = props.data;
   return (
     <g className='comparator-2'>
-      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
-      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
       <g transform={transform(20, 0)}>
         <Comparator1View data={props.data._a1Compb1} />
         <g transform='translate(0, 120)'>
@@ -124,10 +169,10 @@ const Comparator2View = (props) => {
       <path d="M 0 30 H 20" stroke={color(data.inA1())}
         strokeWidth={wireStrokeWidth} fill='none' />
       // a0
-      <path d="M 0 60 H 10 V 150 H 20" stroke={color(data.inA0())}
+      <path d="M 0 70 H 10 V 150 H 20" stroke={color(data.inA0())}
         strokeWidth={wireStrokeWidth} fill='none' />
       // b1
-      <path d="M 0 180 H 20 V 89" stroke={color(data.inB1())}
+      <path d="M 0 170 H 20 V 89" stroke={color(data.inB1())}
         strokeWidth={wireStrokeWidth} fill='none' />
       // b0
       <path d="M 0 210 H 20 V 210" stroke={color(data.inB0())}
@@ -135,12 +180,12 @@ const Comparator2View = (props) => {
       // internal wires
       <path d="M 160 20 H 200" stroke={color(data._a1Compb1.outEq())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 200 30 H 180 V 140 H 160"
+      <path d="M 200 30 H 185 V 140 H 160"
         stroke={color(data._a0Compb0.outEq())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <path d="M 170 20 V 85 H 200" stroke={color(data._a1Compb1.outEq())}
+      <path d="M 180 20 V 85 H 200" stroke={color(data._a1Compb1.outEq())}
         strokeWidth={wireStrokeWidth} fill='none' />
-      <circle cx='170' cy='20' r='3' fill={color(data._a1Compb1.outEq())} />
+      <circle cx='180' cy='20' r='3' fill={color(data._a1Compb1.outEq())} />
       <path d="M 130 190 H 190 V 95 H 200"
         stroke={color(data._a0Compb0.outGt())}
         strokeWidth={wireStrokeWidth} fill='none' />
