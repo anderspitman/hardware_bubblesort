@@ -12,6 +12,7 @@ import {
   GreaterThan1,
   Comparator2,
   Comparator4,
+  Mux4,
   Mux2,
   Mux1,
 } from '../lib/wild_logic/src/index';
@@ -23,6 +24,7 @@ import {
 } from './components/gates';
 
 import {
+  Mux4 as Mux4View,
   Mux2 as Mux2View,
   Mux1 as Mux1View,
 } from './components/mux';
@@ -63,7 +65,7 @@ const BubblesortCircuit = (props) => {
             onSwitchClicked={props.onSwitchClicked} />
         </g>
         <g transform='translate(20, 0)'>
-          <Mux2View data={props.data.mux2} />
+          <Mux4View data={props.data.mux4} />
         </g>
         {/*
         <g transform='translate(20, 0)'>
@@ -324,6 +326,7 @@ const sw5 = createSwitch();
 const sw6 = createSwitch();
 const sw7 = createSwitch();
 const sw8 = createSwitch();
+const sw9 = createSwitch();
 
 const chip = new Comparator4();
 data.comp4 = chip;
@@ -337,12 +340,16 @@ connectPorts(sw6.out(), chip.inB2());
 connectPorts(sw7.out(), chip.inB1());
 connectPorts(sw8.out(), chip.inB0());
 
-data.mux2 = new Mux2();
-connectPorts(sw1.out(), data.mux2.inA1());
-connectPorts(sw2.out(), data.mux2.inA0());
-connectPorts(sw3.out(), data.mux2.inB1());
-connectPorts(sw4.out(), data.mux2.inB0());
-connectPorts(sw5.out(), data.mux2.inS());
+data.mux4 = new Mux4();
+connectPorts(sw1.out(), data.mux4.inA3());
+connectPorts(sw2.out(), data.mux4.inA2());
+connectPorts(sw3.out(), data.mux4.inA1());
+connectPorts(sw4.out(), data.mux4.inA0());
+connectPorts(sw5.out(), data.mux4.inB3());
+connectPorts(sw6.out(), data.mux4.inB2());
+connectPorts(sw7.out(), data.mux4.inB1());
+connectPorts(sw8.out(), data.mux4.inB0());
+connectPorts(sw9.out(), data.mux4.inS());
 
 sw1.setSwitchState(0);
 sw2.setSwitchState(0);
@@ -354,8 +361,10 @@ sw6.setSwitchState(0);
 sw7.setSwitchState(0);
 sw8.setSwitchState(0);
 
+sw9.setSwitchState(0);
+
 data.switches1 = [ sw1, sw2, sw3, sw4 ];
-data.switches2 = [ sw5, sw6, sw7, sw8 ];
+data.switches2 = [ sw5, sw6, sw7, sw8, sw9 ];
 const allSwitches = data.switches1.concat(data.switches2);
 
 

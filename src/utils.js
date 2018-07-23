@@ -2,6 +2,14 @@ export const wireStrokeWidth = 2;
 export const highColor = 'green';
 export const lowColor = 'black';
 
+export function d() {
+  let out = '';
+  for (let s of arguments) {
+    out += ' ' + s;
+  }
+  return out;
+}
+
 export function transform(x, y, rotation, scale) {
 
   if (x === undefined) {
