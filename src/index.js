@@ -56,9 +56,7 @@ const App = (props) => {
 const BubblesortCircuit = (props) => {
   return (
     <CircuitView>
-      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
-      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
-      <g transform='scale(0.5)'>
+      <g transform='scale(0.6)'>
         <g transform='translate(0, 10)'>
           <ButtonBarView switchOffset={0} data={props.data.switches1}
             onSwitchClicked={props.onSwitchClicked} />
