@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
+  connectPorts,
   createSwitch,
   createAndGate,
   createOrGate,
@@ -11,12 +12,26 @@ import {
   GreaterThan1,
   Comparator2,
   Comparator4,
-  connectPorts,
-} from '../lib/wild_logic/index';
+  Mux1,
+} from '../lib/wild_logic/src/index';
 
-const highColor = 'green';
-const lowColor = 'black';
-const wireStrokeWidth = 2;
+import {
+  AndGate as AndGateView,
+  OrGate as OrGateView,
+  NotGate as NotGateView,
+} from './components/gates';
+
+import {
+  Mux1 as Mux1View,
+} from './components/mux';
+
+import {
+  transform,
+  wireStrokeWidth,
+  highColor,
+  lowColor,
+  color,
+} from './utils';
 
 const CircuitView = (props) => (
   <svg width='800' height='600' >
@@ -24,7 +39,7 @@ const CircuitView = (props) => (
   </svg>
 )
 
-function App(props) {
+const App = (props) => {
   return (
     <div className='container'>
       <BubblesortCircuit data={props.data}
@@ -36,16 +51,23 @@ function App(props) {
 const BubblesortCircuit = (props) => {
   return (
     <CircuitView>
-      <g transform='translate(0, 10)'>
-        <ButtonBarView switchOffset={0} data={props.data.switches1}
-          onSwitchClicked={props.onSwitchClicked} />
-      </g>
-      <g transform='translate(0, 310)'>
-        <ButtonBarView switchOffset={4} data={props.data.switches2} 
-          onSwitchClicked={props.onSwitchClicked} />
-      </g>
-      <g transform='translate(20, 0)'>
-        <Comparator4View data={props.data.comp4} />
+      <g transform='scale(0.75)'>
+        <g transform='translate(0, 10)'>
+          <ButtonBarView switchOffset={0} data={props.data.switches1}
+            onSwitchClicked={props.onSwitchClicked} />
+        </g>
+        <g transform='translate(0, 310)'>
+          <ButtonBarView switchOffset={4} data={props.data.switches2} 
+            onSwitchClicked={props.onSwitchClicked} />
+        </g>
+        <g transform='translate(20, 0)'>
+          <Mux1View data={props.data.mux1} />
+        </g>
+        {/*
+        <g transform='translate(20, 0)'>
+          <Comparator4View data={props.data.comp4} />
+        </g>
+        */}
       </g>
     </CircuitView>
   );
@@ -81,8 +103,6 @@ const Comparator4View = (props) => {
   const data = props.data;
   return (
     <g className='comparator-4'>
-      <path d='M -10 0 H 10' stroke='black' strokeWidth='2'/>
-      <path d='M 0 -10 V 10' stroke='black' strokeWidth='2'/>
       <g transform={transform(50, 0)} >
         <g transform='translate(0, 0)'>
           <Comparator2View data={props.data._comp1} />
@@ -247,38 +267,6 @@ const GreaterThan1View = (props) => {
   );
 }
 
-const AndGateView = (props) => {
-  const and = props.data;
-  const color = and.out().getState() === 0 ? 'black' : 'green';
-  return (
-    <g className='and-gate'>
-      <rect fill={color} x='0' y='0' width='20' height='20'></rect>
-      <circle fill={color} cx='20' cy='10' r='10'></circle>
-    </g>
-  );
-}
-
-const NotGateView = (props) => {
-  const color = props.data.out().getState() === 0 ? 'black' : 'green';
-  return (
-    <g className='not-gate'>
-      <polygon fill={color} points='0,0 20,10 0,20'></polygon>
-      <circle fill={color} cx='20' cy='10' r='3'></circle>
-    </g>
-  );
-}
-
-const OrGateView = (props) => {
-  const color = props.data.out().getState() === 0 ? 'black' : 'green';
-  return (
-    <g className='or-gate'
-        transform={transform(props.x, props.y, props.rotation, props.scale)}>
-      <rect fill={color} x='0' y='0' width='20' height='20'></rect>
-      <circle fill={color} cx='20' cy='10' r='10'></circle>
-    </g>
-  );
-}
-
 const XnorGateView = (props) => {
   const data = props.data;
   const orColor = props.data._or.out().getState() === 0 ? 'black' : 'green';
@@ -323,29 +311,6 @@ const NandGateView = (props) => {
   );
 }
 
-function transform(x, y, rotation, scale) {
-
-  if (x === undefined) {
-    x = 0;
-  }
-
-  if (y === undefined) {
-    y = 0;
-  }
-
-  let transform = "translate(" + x + ", " + y + ")";
-
-  if (rotation !== undefined) {
-    transform += " rotate(" + rotation + ")";
-  }
-
-  if (scale !== undefined) {
-    transform += " scale(" + scale + ")";
-  }
-
-  return transform;
-}
-
 
 const data = {};
 
@@ -369,6 +334,11 @@ connectPorts(sw5.out(), chip.inB3());
 connectPorts(sw6.out(), chip.inB2());
 connectPorts(sw7.out(), chip.inB1());
 connectPorts(sw8.out(), chip.inB0());
+
+data.mux1 = new Mux1();
+connectPorts(sw1.out(), data.mux1.inA());
+connectPorts(sw2.out(), data.mux1.inB());
+connectPorts(sw3.out(), data.mux1.inS());
 
 sw1.setSwitchState(0);
 sw2.setSwitchState(0);
@@ -396,10 +366,6 @@ function switchClicked(index) {
   }
 
   render();
-}
-
-function color(elem) {
-  return elem.getState() === 0 ? lowColor : highColor;
 }
 
 function render() {

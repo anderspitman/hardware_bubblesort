@@ -1,3 +1,7 @@
+export const wireStrokeWidth = 2;
+export const highColor = 'green';
+export const lowColor = 'black';
+
 export function transform(x, y, rotation, scale) {
 
   if (x === undefined) {
@@ -20,3 +24,8 @@ export function transform(x, y, rotation, scale) {
 
   return transform;
 }
+
+export function color(elem) {
+  return elem.getState() === 0 ? lowColor : highColor;
+}
+
