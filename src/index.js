@@ -3,43 +3,23 @@ import ReactDOM from 'react-dom';
 import {
   connectPorts,
   createSwitch,
-  createAndGate,
-  createOrGate,
-  createNotGate,
-  createNandGate,
-  createXnorGate,
-  Comparator1,
-  GreaterThan1,
-  Comparator2,
-  Comparator4,
-  Mux4,
-  Mux2,
-  Mux1,
   SwapIfGreater4,
+  Swap4,
+  Swap4Set,
+  BubbleSort,
 } from '../lib/wild_logic/src/index';
 
 import { SwapIfGreater4 as SwapIfGreater4View } from './components/swapper';
 
 import {
-  Mux4 as Mux4View,
-  Mux2 as Mux2View,
-  Mux1 as Mux1View,
-} from './components/mux';
-
-import {
   transform,
-  wireStrokeWidth,
   highColor,
   lowColor,
   color,
 } from './utils';
 
-import {
-  Comparator4 as Comparator4View,
-} from './components/comparator';
-
 const CircuitView = (props) => (
-  <svg width='800' height='600' >
+  <svg width='800' height='1200' >
     {props.children}
   </svg>
 )
@@ -56,7 +36,9 @@ const App = (props) => {
 const BubblesortCircuit = (props) => {
   return (
     <CircuitView>
-      <g transform='scale(0.6)'>
+      <g transform='scale(0.2)'>
+        <Swap4SetView data={props.data.swap4set} />
+        {/*
         <g transform='translate(0, 10)'>
           <ButtonBarView switchOffset={0} data={props.data.switches1}
             onSwitchClicked={props.onSwitchClicked} />
@@ -68,10 +50,29 @@ const BubblesortCircuit = (props) => {
         <g transform='translate(20, 0)'>
           <SwapIfGreater4View data={props.data.swap} />
         </g>
+        */}
       </g>
     </CircuitView>
   );
 }
+
+
+const Swap4SetView = (props) => {
+  const data = props.data;
+  return data.getSwaps().map((swap, i) => {
+    return (
+      <SwapIfGreater4View data={swap} key={i} y={i * 600}/>
+    );
+  });
+}
+
+//const Swap4View = (props) => {
+//  const data = props.data;
+//  return (
+//    <SwapIfGreater4View data={data._swapper} y={props.y} />
+//  );
+//}
+
 
 const ButtonBarView = (props) => {
 
@@ -101,7 +102,6 @@ const ButtonView = (props) => {
 
 
 
-
 const data = {};
 
 const sw1 = createSwitch();
@@ -114,30 +114,12 @@ const sw7 = createSwitch();
 const sw8 = createSwitch();
 const sw9 = createSwitch();
 
-data.comp4 = new Comparator4();
-data.mux4 = new Mux4();
-const swap = new SwapIfGreater4();
-data.swap = swap;
+const swap4Set = new Swap4Set();
+data.swap4set = swap4Set;
 
-connectPorts(sw1.out(), swap.inA3());
-connectPorts(sw2.out(), swap.inA2());
-connectPorts(sw3.out(), swap.inA1());
-connectPorts(sw4.out(), swap.inA0());
-connectPorts(sw5.out(), swap.inB3());
-connectPorts(sw6.out(), swap.inB2());
-connectPorts(sw7.out(), swap.inB1());
-connectPorts(sw8.out(), swap.inB0());
-
-//connectPorts(data.comp4.outGt(), data.mux4.inS());
-//
-//connectPorts(sw1.out(), data.mux4.inB3());
-//connectPorts(sw2.out(), data.mux4.inB2());
-//connectPorts(sw3.out(), data.mux4.inB1());
-//connectPorts(sw4.out(), data.mux4.inB0());
-//connectPorts(sw5.out(), data.mux4.inA3());
-//connectPorts(sw6.out(), data.mux4.inA2());
-//connectPorts(sw7.out(), data.mux4.inA1());
-//connectPorts(sw8.out(), data.mux4.inA0());
+for (let i = 0; i < 4; i++) {
+  swap4Set.addSwap();
+}
 
 sw1.setSwitchState(0);
 sw2.setSwitchState(0);
