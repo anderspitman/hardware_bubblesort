@@ -163,7 +163,7 @@ const GreaterThan1View = (props) => {
   const data = props.data;
   const andColor =
     props.data._and.inA().getState() === 0 ? lowColor : highColor;
-  const notColor = props.data._not.getState() === 0 ? lowColor : highColor;
+  const notColor = props.data._not.out().getState() === 0 ? lowColor : highColor;
   return (
     <g className='greater-than-1'>
       <g transform='translate(50, 0)'>
